@@ -1,4 +1,4 @@
-//node textoEncriptado.js "Escribir para ver si el texto hacker funciona"
+//node mensajeEncriptado.js "Escribir para ver si el texto hacker funciona"
 if (!process.argv[2]) {
     console.log("Papu! Faltó el argumento!")
     process.exit(1)
@@ -10,6 +10,8 @@ const arrayI = ["1", "!"]; // "1 ! |"
 const arrayO = ["0", "*", "()", "Ф"]; // "0 () [] <>"
 const arrayU = ["(_)", "|_|", "L|", "v"]; //"(_) |_| L|"
 //node fullTextoHack.js "3st@ p4rΛ vn4 m1l@ng4s"
+
+//busca una caracter especial aleartoriamente según su array
 let letraRandom = (arr) => {
     let random = 0;
     let length = arr.length;
@@ -17,7 +19,7 @@ let letraRandom = (arr) => {
     return random;
 }
 
-let traducirAHacker = (string, arrA, arrE, arrI, arrO, arrU) => {
+let mensajeEncriptado = (string, arrA, arrE, arrI, arrO, arrU) => {
 
     let index = 0;
     index = letraRandom(arrA) - 1;
@@ -38,7 +40,7 @@ let traducirAHacker = (string, arrA, arrE, arrI, arrO, arrU) => {
     return string;
 }
 
-let traducirAHumano = (string, arrA, letraA, arrE, letraE, arrI, letraI, arrO, letraO, arrU, letraU) => {
+let mensajeDescrifrado = (string, arrA, letraA, arrE, letraE, arrI, letraI, arrO, letraO, arrU, letraU) => {
     let arrAux = string.split("");
     for (let i = 0; i < arrAux.length; i++) {
         if (arrA.includes(arrAux[i])) {
@@ -66,8 +68,8 @@ let texto = process.argv[2];
 const regex = /^[A-Z ]+$/i
 
 if (regex.test(texto)) {       
-    console.log(traducirAHacker(texto, arrayA, arrayE, arrayI, arrayO, arrayU));
+    console.log(mensajeEncriptado(texto, arrayA, arrayE, arrayI, arrayO, arrayU));
 } else {
-    console.log(traducirAHumano(texto, arrayA, "a", arrayE, "e", arrayI, "i", arrayO, "o", arrayU, "u"));
+    console.log(mensajeDescrifrado(texto, arrayA, "a", arrayE, "e", arrayI, "i", arrayO, "o", arrayU, "u"));
 }
 //node fullTextoHack.js "3st@ p4rΛ vn4s m1l@ng4s"
