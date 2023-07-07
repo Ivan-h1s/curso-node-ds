@@ -13,6 +13,7 @@ let letraRandom = (arr) => {
     return random;
 }
 
+let index = 0;
 let arrA = ["4", "@", "/\\"];
 index = letraRandom(arrA) - 1;
 texto = texto.replace(/a/gi, arrA[index])
