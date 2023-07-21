@@ -6,7 +6,7 @@ const buscarNumeroMasCercano = (randNum, numeros) => {
     });
     return numeroMasCercano;
 }  
-
+//slice(2) elimina los primeros dos elementos de 'process.argv', luego convertimos cada elemento de la matriz en un número entero
 const numeros = process.argv.slice(2).map(num => parseInt(num));
 
 const promesa = new Promise((resolve, reject) => {
