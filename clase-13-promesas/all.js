@@ -1,10 +1,11 @@
 console.log("Iniciando ...");
 const randomNumber = (from = 1, to = 1000) => Math.floor(Math.random() * (to - from + 1)) + from;
-
 let contador = 0;
+
 const generadorDePromesas = (demora, number) => new Promise((resolve, reject) => {
     contador++;
     console.log(`Inicio Promesas ${contador}`);
+    
     setTimeout(() => {
         if (number % 2 === 0) {
             resolve(`Promesa: El número ${number} es par y demoré ${demora}ms.`);
