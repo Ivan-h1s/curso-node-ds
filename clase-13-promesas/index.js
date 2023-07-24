@@ -1,4 +1,4 @@
-//Promesas. Ejercicio del repo del profe https://gitlab.com/danielsegovia/curso-node/-/blob/main/13-promesas/index.js
+//Promesas. Ejercicio del repo del profe https://gitlab.com/danielsegovia/curso-node/-/tree/main/13-promesas
 console.log("Iniciando ...");
 const randomNumber = (from=1, to=1000) => Math.floor(Math.random() * (to - from + 1)) + from;
 
