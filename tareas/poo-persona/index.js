@@ -9,10 +9,10 @@ const crearPersonaRandom = () => ({
     colorFavorito: faker.color.human()
 });
 
-//node index.js 5 le pasamos la cantidad de objetos a crear y sino por defecto crea 3
+//le pasamos la cantidad de objetos a crear por argumento y sino por defecto crea 3
 let cantidadObjetosCrear = parseInt(process.argv[2]) || 3;
 
-//iniciamos un array y en count ponemos la cantidad de objetos a crear
+//iniciamos un array y crea la cantidad de objetos según el argumento que le pasamos o no
 const arrayPers = [] = faker.helpers.multiple(crearPersonaRandom, {count: cantidadObjetosCrear})
 
 console.log(arrayPers);//imprimo solo para chequear si funca el programita
