@@ -19,13 +19,13 @@ console.log(arrayPers);//imprimo solo para chequear si funca el programita
 
 //si no hay adultos imprime un mensaje negativo y sino imprime un array de objetos con los que cumplen la condición.
 const mayorEdad = (arr) => {
-    console.log("============================");
+    console.log("\x1b[33m%s\x1b[0m", " =======================");
     let adulto = arr.filter(e => e.edad > 17);    
     
     if (adulto.length === 0) {
-        return " No hay mayores de edad!!!";
+        return " NO HAY MAYORES DE EDAD!";
     } else {
-        console.log(" Lista de mayores de edad: "); 
+        console.log("    MAYORES DE EDAD:    "); 
         return adulto;
     }
 }
