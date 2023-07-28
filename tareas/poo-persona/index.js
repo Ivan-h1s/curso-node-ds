@@ -1,11 +1,11 @@
-//npm install @faker-js/faker --save-dev
+//llamo a la depedencia
 const { faker } = require('@faker-js/faker');
 
 //crea un objeto tipo persona con valores aleatorios
 const crearPersonaRandom = () => ({
     nombre: faker.person.firstName(),
     apellido: faker.person.lastName(),
-    edad: faker.number.int({min: 1, max: 100}),
+    edad: faker.number.int({min: 1, max: 10}),
     colorFavorito: faker.color.human()
 });
 
@@ -13,20 +13,17 @@ const crearPersonaRandom = () => ({
 let cantidadObjetosCrear = parseInt(process.argv[2]) || 3;
 
 //iniciamos un array y crea la cantidad de objetos según el argumento que le pasamos o no
-const arrayPers = [] = faker.helpers.multiple(crearPersonaRandom, {count: cantidadObjetosCrear})
+const arrayPers = [] = faker.helpers.multiple(crearPersonaRandom, {count: cantidadObjetosCrear});
 
-console.log(arrayPers);//imprimo solo para chequear si funca el programita
+console.log("Total de personas evaluadas: \n", arrayPers);//imprimo solo para chequear si funca el programita
 
-//si no hay adultos imprime un mensaje negativo y sino imprime un array de objetos con los que cumplen la condición.
 const mayorEdad = (arr) => {
-    console.log("\x1b[33m%s\x1b[0m", " =======================");
     let adulto = arr.filter(e => e.edad > 17);    
+    console.log("-------------------------------------------------------------------------------------------");
     
-    if (adulto.length === 0) {
-        return " NO HAY MAYORES DE EDAD!";
-    } else {
-        console.log("    MAYORES DE EDAD:    "); 
-        return adulto;
-    }
+    console.log(!adulto.length  ? "NO HAY MAYORES DE EDAD!" : "MAYORES DE EDAD: \n", adulto);    
+
+    let estadistica = `\nTotal de personas evaluadas = ${arr.length} \nMayores de edad = ${adulto.length} \nMenores de edad = ${arr.length - adulto.length}`;
+    return estadistica; 
 }
 console.log(mayorEdad(arrayPers));
