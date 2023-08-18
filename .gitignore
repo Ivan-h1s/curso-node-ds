@@ -8,7 +8,10 @@ tareas/bubbleSort/b.js
 beta
 #tareas/suma-array/sumaContinuos.js
 tareas/tennis
-tareas/poo-persona/node_modules
-tareas-backend
+#tareas/poo-persona/node_modules
+#tareas-backend/calculadora
+
 #clase-20-arquitectura
 *.txt
+.env
+*node_modules
