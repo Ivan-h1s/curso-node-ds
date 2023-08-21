@@ -10,7 +10,7 @@ beta
 tareas/tennis
 #tareas/poo-persona/node_modules
 #tareas-backend/calculadora
-
+#tareas-backend/api-productos
 #clase-20-arquitectura
 *.txt
 .env

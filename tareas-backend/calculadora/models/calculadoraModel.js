@@ -25,7 +25,7 @@ const guardarRegistro = (data, nombreOperacion) => {
         fs.writeFileSync(SECRET_DB_NAME, JSON.stringify(data), { flag: 'a' });
         console.log(`La ${nombreOperacion} se guardo exitosamente en el archivo de registro.`);
     } catch (error) {
-        console.error("Error al escribir la ${nombreOperacion} en el archivo de registro: ", error);
+        console.error(`Error al escribir la ${nombreOperacion} en el archivo de registro: `, error);
     }
 }
 
