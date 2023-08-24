@@ -14,10 +14,10 @@ const datos = () => {
 }
 
 let id = 1;
-const crearId = () => id++;
+const generarNuevoId = () => id++;
 
 const agregar = (producto) => {     
-    producto.id = crearId();  
+    producto.id = generarNuevoId();  
     productos.push(producto);
 
     fs.writeFileSync(config.DB_NAME, JSON.stringify(productos)/* , {flag:'a+'} */, (err) => {
