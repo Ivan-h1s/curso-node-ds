@@ -1,110 +1,110 @@
 const express = require('express');
 const router = express.Router();
 const productoControllers = require('../controllers/productos');
+const _ = require('lodash');
 
-router.get('/', (req, res) => {//funca
+router.get('/', (req, res) => {//muestra todos
     try {
-        console.log("request GET. Muestro todos.");
         const productos = productoControllers.mostrarProductos();
+        const len = productoControllers.mostrarProductos().length;
         res.status(200).json({
-            mensaje: 'Todos los productos.',
-            productos: productos
+            mensaje: `Total de productos: ${len}`, productos
         })
     } catch (error) {
         res.status(500).json(error);
     }
 });
 
-router.get('/:id', (req, res) => {//funca
-    console.log("request GET. Muestro uno.");
-    const productos = productoControllers.mostrarProductos();
+router.get('/:id', (req, res) => {//busca por id
     const id = parseInt(req.params.id);
-    const producto = productos.find(p => p.id === id);
-    
+    const producto = productoControllers.buscarPorId(id);
+
     if (!producto) {//si no encuentra el id 
         res.status(404).json({
             mensaje: `No se encontró ningún producto con el ID: ${id}.`
         });
-    } else {
-        res.status(200).json({
-            mensaje: `Producto elegido: ${producto.nombre}.`,
-            producto: producto
-        });
     }
+    res.status(200).json({
+        mensaje: `Producto elegido: ${producto.nombre}`,
+        producto: producto
+    });
 });
 
-//buscar por nombre del producto
+//buscar por coincidencia del nombre del producto
 router.get('/:id/:nombre', (req, res) => {//funca
-    console.log("request GET. Muestro nombre.");
-    const productos = productoControllers.mostrarProductos();
     const nombre = req.params.nombre;
-    const regex = new RegExp(nombre, 'i'); // busca cualquier string que coincida, sea upper o lower
-    const producto = productos.find(p => regex.test(p.nombre));
-    
-    if (!producto) {//si no encuentra el id 
+    const producto = productoControllers.buscarPorNombre(nombre);
+
+    if (producto.length === 0) {
         res.status(404).json({
             mensaje: `No se encontró ningún producto con el nombre: ${nombre}.`
         });
-    } else {
-        res.status(200).json({
-            mensaje: `Producto elegido: ${producto.nombre}.`,
-            producto: producto
-        });
     }
+    res.status(200).json(producto);
 });
 
-router.post('/', (req, res) => {//funca
-        
+router.post('/', (req, res) => {//funca        
     try {
-        console.log("request POST");
-        productoControllers.datosProductos(req.body);
-        productoControllers.agregarProducto(req.body);
-        console.log(req.body);
-
-        res.status(201).json({
-        mensaje:`El producto ${req.body.nombre} ha sido agregado.`,
-        producto: req.body
-    })
+        const { nombre, descripcion, peso_en_gramos, medidas_cm, ...extraProps } = req.body;
+        if (!nombre || !descripcion || !peso_en_gramos || !medidas_cm  || !medidas_cm.largo || !medidas_cm.ancho || !medidas_cm.alto) {
+            res.status(404).json({
+            mensaje: "Error. Faltan datos."
+        });
+        } else if (Object.keys(extraProps).length > 0 || Object.keys(medidas_cm).length > 3) {
+            res.status(404).json({
+                mensaje: "No se pueden agregar propiedades adicionales."
+            })
+        } else {
+            productoControllers.addProducto(nombre, descripcion, peso_en_gramos, medidas_cm);
+            //console.log(req.body);
+            res.status(201).json({
+            mensaje:`El producto ${req.body.nombre} ha sido agregado.`,
+            producto: req.body
+        })}
     } catch (error) {
         res.status(500).json(error);
     }
 });
 
 router.put('/:id', (req, res) => {      //creo que está
-    console.log("request PUT");
-    const productos = productoControllers.mostrarProductos(req.body);//req.body??
-    const id = parseInt(req.params.id);
-    const producto = productos.find(p => p.id === id);
+    const id = parseInt(req.params.id);    
+    const producto = productoControllers.buscarPorId(id);
 
     if (!producto) {//si no encuentra el id 
         res.status(404).json({
             mensaje: `No se encontró ningún producto con el ID: ${id}.`
         });
+    };
+     
+    const { nombre, descripcion, peso_en_gramos, medidas_cm, ...extraProps } = req.body;
+    if (!nombre || !descripcion || !peso_en_gramos || !medidas_cm  || !medidas_cm.largo || !medidas_cm.ancho || !medidas_cm.alto) {
+        res.status(404).json({
+            mensaje: "Error. Faltan datos."
+        });
+    } else if (Object.keys(extraProps).length > 0 || Object.keys(medidas_cm).length > 3) {
+        res.status(404).json({
+            mensaje: "No se pueden agregar propiedades adicionales."
+        });
     } else {
-        producto.nombre = req.body.nombre;
-        producto.descripcion = req.body.descripcion;
-        producto.peso_en_gramos = req.body.peso_en_gramos;
-        producto.medidas_cm.largo = req.body.medidas_cm.largo;
-        producto.medidas_cm.ancho = req.body.medidas_cm.ancho;
-        producto.medidas_cm.alto = req.body.medidas_cm.alto;
-        res.status(200).json(producto);
+        productoControllers.updateProd(producto, req.body);
+        console.log(producto);
+        res.status(200).json({
+            mensaje: `Se actualizo el producto: ${producto.nombre}`, producto
+        });
     }
 });
 
-//Arreglar para poder cargar solo una o las necesarias y no todas en postman
-router.patch('/:id', (req, res) => {
-    console.log("request PATCH");
-    const productos = productoControllers.mostrarProductos(req.body);//req.body??
+router.patch('/:id', (req, res) => {  
+    const productos = productoControllers.mostrarProductos();
     const id = parseInt(req.params.id);
-
-    const index = productos.findIndex(p => p.id === id);
-    
-    if (index === -1) {
+    const index = productoControllers.buscarPorIndex(id);
+        
+    if (index === -1) {//si no encuentra el indice
         res.status(404).json({
             mensaje: `No se encontró ningún producto con el ID: ${id}.`
-        }); 
+        });
     } else {
-        productos[index].nombre = req.body.nombre
+        productoControllers.updateProd(productos[index], req.body);
         res.status(200).json(productos[index]);
     }
 });
@@ -112,19 +112,18 @@ router.patch('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
     const productos = productoControllers.mostrarProductos(req.body);
     const id = parseInt(req.params.id);
-    
-    const index = productos.findIndex(p => p.id === id);
-    
-    if (index === - 1) {//si no encuentra el indice
+    const index = productoControllers.buscarPorIndex(id);
+   
+    if (index === -1) {//si no encuentra el indice
         res.status(404).json({
             mensaje: `No se encontró ningún producto con el ID: ${id}.`
         });
     } else {
         productos.splice(index, 1);       
-        res.status(200).json({//con 204 no muestra el mensaje
+        res.status(200).json({
             mensaje: `Se eliminó el producto con el ID: ${id}.`
         }); 
-    } 
+    }
 });
 
 module.exports = router; 
