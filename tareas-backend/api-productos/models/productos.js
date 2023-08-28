@@ -1,43 +1,40 @@
 const fs = require('node:fs');
 const config = require('../config');
+const Joi = require('joi');
+
+// const schema = Joi.object().keys({
+//     nombre: Joi.string().min(2).max(30).required(),
+//     descripcion: Joi.string().min(2).max(60).required(),
+//     kg: Joi.number().precision(3).required(), // 1.125
+//     medidas_cm: Joi.object().keys({
+//         largo: Joi.number().precision(2).required, // 10.22
+//         ancho: Joi.number().precision(2).required, 
+//         alto: Joi.number().precision(2).required
+//     }).required(),
+//     id: Joi.number().integer().min(1).required()
+// });
 
 let productos = [];
 
-// const datos = () => {    
-//     obj = {
-//     nombre: String,
-//     descripcion: String,
-//     peso_en_gramos: Number,
-//     medidas_cm: {largo: Number, ancho: Number, alto: Number},
-//     id: {type: Number, required: true}
-//     }
-// }
+let nextId = 1;
+//const generarNuevoId = () => id++;
 
-let id = 1;
-const generarNuevoId = () => id++;
-
-// const agregar = (producto) => {     
-//     producto.id = generarNuevoId();  
-//     productos.push(producto);
-
-//     fs.writeFileSync(config.DB_NAME, JSON.stringify(productos), {flag:'a+'}, (err) => {
-//         if (err) {throw err};
-//         console.log('Producto registrado');
-//     });
-// }
-
-const add = (nombre, descripcion, peso_en_gramos, medidas_cm/* largo, ancho, alto */) => {
+const add = (nombre, descripcion, kg, medidas_cm/* largo, ancho, alto */) => {
     obj = {
         nombre,
         descripcion,
-        peso_en_gramos,
+        kg,
         medidas_cm: {largo: medidas_cm.largo, ancho: medidas_cm.ancho, alto: medidas_cm.alto},
-        id
+        id: nextId
     }
-    obj.id = generarNuevoId();
+    //obj.id = generarNuevoId();
+    // const {error} = schema.validate(obj);
+    // if (error) {
+    //     throw new Error(`Object validation failed: ${error.message}`);
+    // }
+    nextId++;    
     productos.push(obj);
-    const data = `${JSON.stringify(productos)}\n`;
-    fs.writeFileSync(config.DB_NAME, data, {flag:'w+'});
+    fs.writeFileSync(config.DB_NAME, JSON.stringify(productos), {flag:'w+'});
 }
 
 //muestra el array de objetos
@@ -52,29 +49,26 @@ const prodIndex = (id) => {
     return products.findIndex(producto => producto.id === id);
 };
 
-// const regex = new RegExp(nombre, 'i'); // busca cualquier string que coincida, sea upper o lower
-// const producto = productos.find(p => regex.test(p.nombre));
+//buscar por palabra por caracteres coincidentes
 const regexNombre = (nombre) => {
     const regex = new RegExp(nombre, 'i');
     return mostrarTodos().filter(p => regex.test(p.nombre));
 }
 
-// const update = (p, body) => {
-//     //const { nombre, descripcion, peso_en_gramos, medidas_cm } = body;
-//     p.nombre = body.nombre;
-//     p.descripcion = body.descripcion;
-//     p.peso_en_gramos = body.peso_en_gramos;
-//     p.medidas_cm.largo = body.medidas_cm.largo;
-//     p.medidas_cm.ancho = body.medidas_cm.ancho;
-//     p.medidas_cm.alto = body.medidas_cm.alto;
-// }
-
 const update = (p, body) => {// asi se puede elegir solo una prop para patch y no hay que cargar todas p/ actualizar solo una
     for (let prop in body) {
         p[prop] = body[prop];
     }
+    
+    fs.writeFileSync(config.DB_NAME, JSON.stringify(productos), {flag:'w+'});
+};
+
+const del = (index) => {
+    productos.splice(index, 1);
+
+    fs.writeFileSync(config.DB_NAME, JSON.stringify(productos), {flag:'w+'});
 };
 
 module.exports = {
-    mostrarTodos, add, prodId, prodIndex, regexNombre, update
+    mostrarTodos, add, prodId, prodIndex, regexNombre, update, del
 }

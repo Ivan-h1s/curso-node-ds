@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const productoControllers = require('../controllers/productos');
-const _ = require('lodash');
 
 router.get('/', (req, res) => {//muestra todos
     try {
         const productos = productoControllers.mostrarProductos();
-        const len = productoControllers.mostrarProductos().length;
         res.status(200).json({
-            mensaje: `Total de productos: ${len}`, productos
+            mensaje: `Cantidad de productos: ${productos.length}`, productos
         })
     } catch (error) {
         res.status(500).json(error);
@@ -45,8 +43,8 @@ router.get('/:id/:nombre', (req, res) => {//funca
 
 router.post('/', (req, res) => {//funca        
     try {
-        const { nombre, descripcion, peso_en_gramos, medidas_cm, ...extraProps } = req.body;
-        if (!nombre || !descripcion || !peso_en_gramos || !medidas_cm  || !medidas_cm.largo || !medidas_cm.ancho || !medidas_cm.alto) {
+        const { nombre, descripcion, kg, medidas_cm, ...extraProps } = req.body;
+        if (!nombre || !descripcion || !kg || !medidas_cm  || !medidas_cm.largo || !medidas_cm.ancho || !medidas_cm.alto) {
             res.status(404).json({
             mensaje: "Error. Faltan datos."
         });
@@ -55,7 +53,7 @@ router.post('/', (req, res) => {//funca
                 mensaje: "No se pueden agregar propiedades adicionales."
             })
         } else {
-            productoControllers.addProducto(nombre, descripcion, peso_en_gramos, medidas_cm);
+            productoControllers.addProducto(nombre, descripcion, kg, medidas_cm);
             //console.log(req.body);
             res.status(201).json({
             mensaje:`El producto ${req.body.nombre} ha sido agregado.`,
@@ -76,8 +74,8 @@ router.put('/:id', (req, res) => {      //creo que está
         });
     };
      
-    const { nombre, descripcion, peso_en_gramos, medidas_cm, ...extraProps } = req.body;
-    if (!nombre || !descripcion || !peso_en_gramos || !medidas_cm  || !medidas_cm.largo || !medidas_cm.ancho || !medidas_cm.alto) {
+    const { nombre, descripcion, kg, medidas_cm, ...extraProps } = req.body;
+    if (!nombre || !descripcion || !kg || !medidas_cm  || !medidas_cm.largo || !medidas_cm.ancho || !medidas_cm.alto) {
         res.status(404).json({
             mensaje: "Error. Faltan datos."
         });
@@ -110,7 +108,7 @@ router.patch('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-    const productos = productoControllers.mostrarProductos(req.body);
+    //const productos = productoControllers.mostrarProductos(req.body);
     const id = parseInt(req.params.id);
     const index = productoControllers.buscarPorIndex(id);
    
@@ -119,11 +117,12 @@ router.delete('/:id', (req, res) => {
             mensaje: `No se encontró ningún producto con el ID: ${id}.`
         });
     } else {
-        productos.splice(index, 1);       
+        //productos.splice(index, 1);       
+        productoControllers.deleteProd(index);
         res.status(200).json({
             mensaje: `Se eliminó el producto con el ID: ${id}.`
         }); 
     }
 });
 
-module.exports = router; 
+module.exports = router;
