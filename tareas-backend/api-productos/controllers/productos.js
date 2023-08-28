@@ -15,5 +15,11 @@ const updateProd = (p, body) => userModels.update(p, body);
 const deleteProd = (index) => userModels.del(index);
 
 module.exports = {
-    mostrarProductos, buscarPorId, buscarPorIndex, buscarPorNombre,  addProducto, updateProd, deleteProd
+    mostrarProductos, 
+    buscarPorId, 
+    buscarPorIndex, 
+    buscarPorNombre,  
+    addProducto, 
+    updateProd, 
+    deleteProd
 }

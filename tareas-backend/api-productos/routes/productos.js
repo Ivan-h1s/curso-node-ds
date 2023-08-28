@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const productoControllers = require('../controllers/productos');
+const productoMiddlewares = require('../middlewares/productos');
+
+router.use(productoMiddlewares.productoLogger);
 
 router.get('/', (req, res) => {//muestra todos
     try {
@@ -13,7 +16,7 @@ router.get('/', (req, res) => {//muestra todos
     }
 });
 
-router.get('/:id', (req, res) => {//busca por id
+router.get('/:id', productoMiddlewares.validarId, (req, res) => {//busca por id
     const id = parseInt(req.params.id);
     const producto = productoControllers.buscarPorId(id);
 
@@ -22,10 +25,7 @@ router.get('/:id', (req, res) => {//busca por id
             mensaje: `No se encontró ningún producto con el ID: ${id}.`
         });
     }
-    res.status(200).json({
-        mensaje: `Producto elegido: ${producto.nombre}`,
-        producto: producto
-    });
+    res.status(200).json(producto);
 });
 
 //buscar por coincidencia del nombre del producto
@@ -41,30 +41,21 @@ router.get('/:id/:nombre', (req, res) => {//funca
     res.status(200).json(producto);
 });
 
-router.post('/', (req, res) => {//funca        
+router.post('/', productoMiddlewares.validarDataProd, (req, res) => {//funca        
     try {
-        const { nombre, descripcion, kg, medidas_cm, ...extraProps } = req.body;
-        if (!nombre || !descripcion || !kg || !medidas_cm  || !medidas_cm.largo || !medidas_cm.ancho || !medidas_cm.alto) {
-            res.status(404).json({
-            mensaje: "Error. Faltan datos."
-        });
-        } else if (Object.keys(extraProps).length > 0 || Object.keys(medidas_cm).length > 3) {
-            res.status(404).json({
-                mensaje: "No se pueden agregar propiedades adicionales."
-            })
-        } else {
-            productoControllers.addProducto(nombre, descripcion, kg, medidas_cm);
-            //console.log(req.body);
-            res.status(201).json({
-            mensaje:`El producto ${req.body.nombre} ha sido agregado.`,
-            producto: req.body
-        })}
+        const { nombre, descripcion, kg, medidas_cm} = req.body;        
+        productoControllers.addProducto(nombre, descripcion, kg, medidas_cm);
+        //console.log(req.body);
+        res.status(201).json({
+        mensaje:`El producto ${req.body.nombre} ha sido agregado.`,
+        producto: req.body
+        })
     } catch (error) {
         res.status(500).json(error);
     }
 });
 
-router.put('/:id', (req, res) => {      //creo que está
+router.put('/:id', productoMiddlewares.validarId, productoMiddlewares.validarDataProd, (req, res) => {      //creo que está
     const id = parseInt(req.params.id);    
     const producto = productoControllers.buscarPorId(id);
 
@@ -72,18 +63,7 @@ router.put('/:id', (req, res) => {      //creo que está
         res.status(404).json({
             mensaje: `No se encontró ningún producto con el ID: ${id}.`
         });
-    };
-     
-    const { nombre, descripcion, kg, medidas_cm, ...extraProps } = req.body;
-    if (!nombre || !descripcion || !kg || !medidas_cm  || !medidas_cm.largo || !medidas_cm.ancho || !medidas_cm.alto) {
-        res.status(404).json({
-            mensaje: "Error. Faltan datos."
-        });
-    } else if (Object.keys(extraProps).length > 0 || Object.keys(medidas_cm).length > 3) {
-        res.status(404).json({
-            mensaje: "No se pueden agregar propiedades adicionales."
-        });
-    } else {
+    } else {    
         productoControllers.updateProd(producto, req.body);
         console.log(producto);
         res.status(200).json({
@@ -92,7 +72,7 @@ router.put('/:id', (req, res) => {      //creo que está
     }
 });
 
-router.patch('/:id', (req, res) => {  
+router.patch('/:id', productoMiddlewares.validarId, /* productoMiddlewares.validarProp, */(req, res) => {  
     const productos = productoControllers.mostrarProductos();
     const id = parseInt(req.params.id);
     const index = productoControllers.buscarPorIndex(id);
@@ -107,8 +87,7 @@ router.patch('/:id', (req, res) => {
     }
 });
 
-router.delete('/:id', (req, res) => {
-    //const productos = productoControllers.mostrarProductos(req.body);
+router.delete('/:id', productoMiddlewares.validarId, (req, res) => {
     const id = parseInt(req.params.id);
     const index = productoControllers.buscarPorIndex(id);
    
@@ -117,7 +96,6 @@ router.delete('/:id', (req, res) => {
             mensaje: `No se encontró ningún producto con el ID: ${id}.`
         });
     } else {
-        //productos.splice(index, 1);       
         productoControllers.deleteProd(index);
         res.status(200).json({
             mensaje: `Se eliminó el producto con el ID: ${id}.`
@@ -125,4 +103,4 @@ router.delete('/:id', (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = router; 

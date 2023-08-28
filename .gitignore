@@ -11,7 +11,7 @@ tareas/tennis
 #tareas/poo-persona/node_modules
 #tareas-backend/calculadora
 #tareas-backend/api-productos
-tareas-backend
+#tareas-backend
 #clase-20-arquitectura
 *.txt
 .env

@@ -1,8 +1,10 @@
 const express = require('express');
 const config = require('./config');//llamo a dotenv
+const logger = require('./middlewares/global');
 
 const app = express();
 app.use(express.json());
+app.use(logger);
 
 const productosRouter = require('./routes/productos');
 app.use('/productos', productosRouter);

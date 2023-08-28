@@ -1,10 +1,10 @@
 const fs = require('node:fs');
 const config = require('../config');
-const Joi = require('joi');
-
+// const Joi = require('joi');
+//                                          //falta implementar joi
 // const schema = Joi.object().keys({
-//     nombre: Joi.string().min(2).max(30).required(),
-//     descripcion: Joi.string().min(2).max(60).required(),
+//     nombre: Joi.string().required(),
+//     descripcion: Joi.string().required(),
 //     kg: Joi.number().precision(3).required(), // 1.125
 //     medidas_cm: Joi.object().keys({
 //         largo: Joi.number().precision(2).required, // 10.22
@@ -25,14 +25,9 @@ const add = (nombre, descripcion, kg, medidas_cm/* largo, ancho, alto */) => {
         descripcion,
         kg,
         medidas_cm: {largo: medidas_cm.largo, ancho: medidas_cm.ancho, alto: medidas_cm.alto},
-        id: nextId
+        id: nextId ++
     }
-    //obj.id = generarNuevoId();
-    // const {error} = schema.validate(obj);
-    // if (error) {
-    //     throw new Error(`Object validation failed: ${error.message}`);
-    // }
-    nextId++;    
+       
     productos.push(obj);
     fs.writeFileSync(config.DB_NAME, JSON.stringify(productos), {flag:'w+'});
 }
@@ -70,5 +65,11 @@ const del = (index) => {
 };
 
 module.exports = {
-    mostrarTodos, add, prodId, prodIndex, regexNombre, update, del
+    mostrarTodos, 
+    add, 
+    prodId, 
+    prodIndex, 
+    regexNombre, 
+    update, 
+    del
 }
