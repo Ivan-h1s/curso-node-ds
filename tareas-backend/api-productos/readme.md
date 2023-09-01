@@ -11,3 +11,5 @@ npm init -y
 npm i express --save
 npm i dotenv --save 
 npm i nodemon --save-dev 
+# npm install mongodb // no hace falta instalar
+npm install mongoose
